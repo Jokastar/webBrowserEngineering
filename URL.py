@@ -70,8 +70,8 @@ class URL:
 
         return body
     
-    def show(self, body):
-
+    def lex(self, body):
+        text=""
         in_tag = False
         for c in body:
             if c == "<":
@@ -79,8 +79,7 @@ class URL:
             elif c == ">":
                 in_tag = False
             elif not in_tag:
-                print(c, end="")
+                text+= c
+        return text
     
-    def load(self):
-        body = self.request()
-        self.show(body)
+  
