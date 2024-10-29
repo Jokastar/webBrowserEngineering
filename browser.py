@@ -1,6 +1,10 @@
 import tkinter
-
-WIDTH, HEIGHT = 800, 600
+import tkinter.font
+from URL import Text
+from Layout import Layout
+from HtmlParser import HtmlParser
+from global_variables import WIDTH, HEIGHT
+from HtmlParser import print_tree
 
 class Browser:
     def __init__(self):
@@ -14,42 +18,34 @@ class Browser:
         self.display_list = []
         self.scroll = 0
         self.SCROLL_STEP = 100
-        self.HSTEP = 13
-        self.VSTEP = 18
+        self.nodes = None
 
+        #bind down key to scrolldown function
         self.window.bind("<Down>", self.scrolldown)
 
-    def layout(self, body):
-    
-        cursor_x, cursor_y = self.HSTEP, self.VSTEP
+        #bind up key to scrolldown function
+        self.window.bind("<Up>", self.scrollup)
 
-        display_list = []
-
-        for c in body:
-            display_list.append((cursor_x, cursor_y, c))
-
-            if(cursor_x >= WIDTH - self.HSTEP):
-                cursor_x = self.HSTEP
-                cursor_y += self.VSTEP
-            else:
-                cursor_x += self.HSTEP
-
-        return display_list
-    
     def draw(self):
         self.canvas.delete("all")
 
-        for x, y, c in self.display_list:
+        for x, y, word, font in self.display_list:
             if y > self.scroll + HEIGHT: continue
-            if y + self.VSTEP < self.scroll: continue
-            self.canvas.create_text(x, y - self.scroll, text=c)
+            if y + font.metrics("linespace") < self.scroll: continue
+            self.canvas.create_text(x, y - self.scroll, text=word, font=font, anchor="nw")
+
 
     def load(self, url):
         body = url.request()
-        text = url.lex(body)
-        self.display_list = self.layout(text)
+        nodes = HtmlParser(body).parse()
+        layout = Layout(nodes)
+        self.display_list = layout.display_list
         self.draw()
 
     def scrolldown(self, e):
         self.scroll += self.SCROLL_STEP
+        self.draw()
+
+    def scrollup(self, e):
+        self.scroll = max(self.scroll - self.SCROLL_STEP, 0)
         self.draw()

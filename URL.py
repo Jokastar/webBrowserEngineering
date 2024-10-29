@@ -71,15 +71,57 @@ class URL:
         return body
     
     def lex(self, body):
-        text=""
+        out = []
+        buffer = ""
         in_tag = False
+
         for c in body:
             if c == "<":
                 in_tag = True
+                # Strip whitespace and add buffer content as Text if it's not empty
+                if buffer:
+                    out.append(Text(buffer.strip()))
+                buffer = ""  # Reset buffer
+
             elif c == ">":
                 in_tag = False
-            elif not in_tag:
-                text+= c
-        return text
+                # Strip whitespace and add buffer content as Tag if it's not empty
+                if buffer:
+                    out.append(Tag(buffer.strip()))
+                buffer = ""  # Reset buffer
+
+            else:
+                buffer += c
+
+        # Add any remaining content in buffer as Text if not in a tag and non-empty
+        if not in_tag and buffer.strip():
+            out.append(Text(buffer.strip()))
+
+        return out
+
     
-  
+
+class Text:
+    def __init__(self, text):
+        self.text = text
+
+    def __str__(self):
+        return self.text
+
+    def __repr__(self):
+        return f'Text("{self.text}")'
+
+
+class Tag:
+    def __init__(self, tag):
+        self.tag = tag
+
+    def __str__(self):
+        return self.tag
+
+    def __repr__(self):
+        return f'Tag("{self.tag}")'
+
+
+
+
