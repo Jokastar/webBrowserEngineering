@@ -3,6 +3,11 @@ SELF_CLOSING_TAGS = [
     "link", "meta", "param", "source", "track", "wbr",
 ]
 
+HEAD_TAGS = [
+        "base", "basefont", "bgsound", "noscript",
+        "link", "meta", "title", "style", "script",
+    ]
+
 class Text:
     def __init__(self, text, parent):
         self.text = text
@@ -124,12 +129,12 @@ class HtmlParser:
                 self.add_tag("html")
             elif open_tags == ["html"] \
                  and tag not in ["head", "body", "/html"]:
-                if tag in self.HEAD_TAGS:
+                if tag in HEAD_TAGS:
                     self.add_tag("head")
                 else:
                     self.add_tag("body")
             elif open_tags == ["html", "head"] and \
-                 tag not in ["/head"] + self.HEAD_TAGS:
+                 tag not in ["/head"] + HEAD_TAGS:
                 self.add_tag("/head")
             else:
                 break
@@ -139,10 +144,7 @@ def print_tree(node, indent=0):
     for child in node.children:
         print_tree(child, indent + 2)
 
-""" body = "<div><p>This is a <b>bold</b><small>move</small> for real</p><p>Donald J Trump</p></div>"
-parser = HtmlParser(body)
-root = parser.parse()
-print_tree(root) """
+
 
 
 

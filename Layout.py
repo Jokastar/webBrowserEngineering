@@ -1,6 +1,9 @@
 import tkinter
+from tkinter import font  # Import `font` directly for easier access
+
+
 from HtmlParser import Text
-from global_variables import HSTEP, VSTEP, WIDTH
+from globals_variables import HSTEP, VSTEP, WIDTH
 
 FONTS = {}
 
